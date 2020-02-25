@@ -21,6 +21,13 @@ Website: https://www.gsmarena.com/
     * Encode cameras: wide, ultrawide, telephoto,
     * Parse Prices
 
+    Attributes per Feature:
+    * Does Company Release Feature
+    * Does Apple Ever Release Feature
+    * When is feature first released by company
+    * When is feature released by Apple
+    * Length of time between company release and first company release
+
     * Parse out CPU speed
     * Parse out pixel density and/or screen size
     * Parse out battery capacities
@@ -43,13 +50,16 @@ Website: https://www.gsmarena.com/
 
 # Functions & Classes:
     * Drop What? (no cellular connectivity, insignificant manufactures)
+    * is eventual Apple feature
+    * is eventual Company feature
+    * is first manufacturer
+    * distance of company from first adoption company
+    * Anova Test
     * Aggregate per year/6mon before & after Apple
     * Year over year trend
-    * Anova Test
+
     * Encode function based off of
-    * is eventual Apple feature
-    * is first manufacturer
-    * distance from first adoption
+    
 
 
 # EDA Tasks:
