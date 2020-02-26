@@ -53,7 +53,7 @@ Website: https://www.gsmarena.com/
     * is eventual Apple feature
     * is eventual Company feature
     * is first manufacturer
-    * distance of company from first adoption company
+    * distance of company from first adoption companyc
     * Anova Test
     * Aggregate per year/6mon before & after Apple
     * Year over year trend
