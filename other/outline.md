@@ -3,30 +3,50 @@ Database Page: https://www.kaggle.com/msainani/gsmarena-mobile-devices
 Website: https://www.gsmarena.com/
 
 # Data Pipeline Tasks:
-    * Date Announced Conversion
-    * Is Tablet or Phone or Watch 
+    * Date Announced Conversion !
+    * Is Tablet or Phone or Watch !
         * 7 in screen or bigger, https://www.cnet.com/news/what-makes-a-tablet-a-tablet-faq/)
             * Contains: Tab, Tablet, pad
         * Contains: watch, band, gear, fit, 
             * has screen smaller than 2" after 2016
     * Is major competitor (based off year?)
-    * Encode network technology
-    * Encode water resistant, water proof, Pay, Stylus
-    * Encode Display Type: LCD, OLED, AMOLED, TFT
-    * Encode sound_loudspeaker
-    * Encode wlan: a, b, g, n, ac, ax
-    * Encode sensors: accelerometer, gyro, heart rate, fingerprint, compass, proximity, barometer, SpO2, iris scanner, gesture, UV, tempurature, altimeter
+    * Format: 
+        misc_price !
+        body_weight 
+        display_size 
+        body_dimensions 
+        display_resolution 
+        battery 
+        memory_internal 
+        cameras:
+            * main_camera_single
+            * main_camera_video !
+            * selfie_camera_single
+            selfie_camera_video
+            main_camera_features
+            selfie_camera_features
+            tests_camera
+            selfie_camera
+            * main_camera_dual
+            selfie_camera_dual
+            camera
+            * main_camera_triple
+            selfie_camera_v1
+            main_camera
+            * main_camera_quad
+            selfie_camera_triple
+            main_camera_v1
+            main_camera_dual_or_triple
+            main_camera_five
+    * Encode features_sensors: accelerometer, gyro, heart rate, fingerprint, compass, proximity, barometer, SpO2, iris scanner, gesture, UV, tempurature, altimeter, infrared face recognition, face id
+    * Encode display_type: LCD, OLED, AMOLED, TFT
+    * Encode battery_charging: wireless charging, fast battery charging
+    * Encode body: water resistant, water proof, Pay, Stylus
+    * Encode cameras: wide, ultrawide, telephoto, panorama
     * Encode main camera: LED, HDR
-    * Encode wireless charging, fast battery charging
-    * Encode cameras: wide, ultrawide, telephoto,
-    * Parse Prices
-
-    Attributes per Feature:
-    * Does Company Release Feature
-    * Does Apple Ever Release Feature
-    * When is feature first released by company
-    * When is feature released by Apple
-    * Length of time between company release and first company release
+    * Encode network_technology
+    * Encode wlan: a, b, g, n, ac, ax
+    * Encode sound_loudspeaker
 
     * Parse out CPU speed
     * Parse out pixel density and/or screen size
@@ -35,11 +55,22 @@ Website: https://www.gsmarena.com/
     * Parse out network speed
     * Encode body/back characteristics
 
+    Attributes per Feature:
+    * Does Company Release Feature
+    * Does Apple Ever Release Feature
+    * When is feature first released
+    * When is feature first released by all companies
+    * When is feature released by Apple
+    * Is Apple First
+    * Length of time between company release and first company release
+
 # Data Addition Tasks:
     * Is Flagship
     * Is Budgetary Phone
     * Company Country of Origin
     * Device Target Market
+
+    * Cluster by year without oem name to see if I get anything interesting
 
     * Understand GSMArena Python Webscrape
     * Execute Webscrape for Ratings, Saves and Hits, Reviews, Discussions
@@ -49,34 +80,41 @@ Website: https://www.gsmarena.com/
     * Which bands available each region and when
 
 # Functions & Classes:
-    * Drop What? (no cellular connectivity, insignificant manufactures)
-    * is eventual Apple feature
-    * is eventual Company feature
-    * is first manufacturer
-    * distance of company from first adoption companyc
-    * Anova Test
-    * Aggregate per year/6mon before & after Apple
-    * Year over year trend
+    Cleaning:
+        * Drop What? (no cellular connectivity, insignificant manufactures)
+        * Encode function based off of splits
 
-    * Encode function based off of
+    * FEATURE ANALYSIS CLASS:
+        * is eventual Apple feature
+        * is eventual Company feature
+        * is first manufacturer
+        * distance of company from first adoption company
+        * Find product families via Levenshtein Distance
+        * Anova Test
+        * Set Timeframe
+            * Aggregate per year/6mon before & after Apple
+            * Year over year trend
+
+    Plots:
+        (see Data Products)
     
-
-
 # EDA Tasks:
     * Number of handsets released each year, theme: consolidation
     * When phones are released in year
     * When new frequency bands are available vs network adoption
     * Progression of megapixels cameras
     * Progression of display size
-    * Progression of pixels
+    * Progression of screen pixels/resolution
     * Progression of battery capacity vs phone weight
-    * Does CPU performance correlate to Moore's Law (may have to find way to equate speeds and number of transistors)
+    * Progression of CPU Speed
+        * Does CPU performance correlate to Moore's Law (may have to find way to equate speeds and number of transistors)
 
 # Further Research Tasks:
     * 
 
 # Unsupervised Clustering:
-
+    * perform random clusters on phones for given year 
+        (find target audience,  )
 
 # Feature Engineering:
     * 
@@ -85,7 +123,7 @@ Website: https://www.gsmarena.com/
 
 
 # Statistical Tests:
-    *
+    * ANOVA, t-test
 
 # Supervised Modeling:
     * KNN
@@ -102,6 +140,11 @@ Website: https://www.gsmarena.com/
 
 # README Tasks:
 
+
+# Scripts:
+    * Clean .py
+    * Feature class .py
+    * EDA .py
 
 # Things Completed:
 
