@@ -33,8 +33,8 @@ class FEATURE(object):
         self.col_list = ['oem', 'feat_released_month', 'months_after_release', 
                                 'feat_removed_month', 'months_before_release']
 
-        self.df_device = self._choose_device()
-        self.df_feat = self._init_df_feat()
+        self.df_device = None
+        self.df_feat = self._company_release()
         
 
     def _clean_df(self):
@@ -63,13 +63,15 @@ class FEATURE(object):
                                             columns = self.col_list)
         self.df_feat['oem'] = man_list
 
-        self._company_release()
-
         return self.df_feat
 
 
     def _company_release(self):
         
+        self._clean_df()
+        self._choose_device()
+        self._init_df_feat()
+
         man_list = list(self.df['oem'].unique())
         
         for man in man_list:
