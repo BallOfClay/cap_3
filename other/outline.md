@@ -38,46 +38,46 @@ Website: https://www.gsmarena.com/
             main_camera_v1
             main_camera_dual_or_triple
             main_camera_five
-    * Encode features_sensors: accelerometer, gyro, heart rate, fingerprint, compass, proximity, barometer, SpO2, iris scanner, gesture, UV, tempurature, altimeter, infrared face recognition, face id
-    * Encode display_type: LCD, OLED, AMOLED, TFT
-    * Encode battery_charging: wireless charging, fast battery charging
-    * Encode body: water resistant, water proof, Pay, Stylus
-    * Encode cameras: wide, ultrawide, telephoto, panorama
-    * Encode main camera: LED, HDR
-    * Encode network_technology
-    * Encode wlan: a, b, g, n, ac, ax
-    * Encode sound_loudspeaker
+    * Encode features_sensors: accelerometer, gyro, heart rate, fingerprint, compass, proximity, barometer, SpO2, iris scanner, gesture, UV, tempurature, altimeter, infrared face recognition, face id !!!
+    * Encode display_type: LCD, OLED, AMOLED, TFT 
+    * Encode battery_charging: wireless charging, fast battery charging 
+    * Encode body: water resistant, water proof, Pay, Stylus 
+    * Encode cameras: wide, ultrawide, telephoto, panorama 
+    * Encode main camera: LED, HDR 
+    * Encode network_technology 
+    * Encode wlan: a, b, g, n, ac, ax 
+    * Encode sound_loudspeaker 
 
-    * Parse out CPU speed
-    * Parse out pixel density and/or screen size
-    * Parse out battery capacities
-    * Parse out each antenna band
-    * Parse out network speed
-    * Encode body/back characteristics
+    * Parse out CPU speed 
+    * Parse out pixel density and/or screen size 
+    * Parse out battery capacities 
+    * Parse out each antenna band 
+    * Parse out network speed 
+    * Encode body/back characteristics 
 
     Attributes per Feature:
-    * Does Company Release Feature
-    * Does Apple Ever Release Feature
-    * When is feature first released
-    * When is feature first released by all companies
-    * When is feature released by Apple
-    * Is Apple First
-    * Length of time between company release and first company release
+    * Does Company Release Feature 
+    * Does Apple Ever Release Feature 
+    * When is feature first released 
+    * When is feature first released by all companies 
+    * When is feature released by Apple 
+    * Is Apple First 
+    * Length of time spefic between company release and first company release 
 
 # Data Addition Tasks:
-    * Is Flagship
-    * Is Budgetary Phone
-    * Company Country of Origin
-    * Device Target Market
+    * Is Flagship 
+    * Is Budgetary Phone 
+    * Company Country of Origin 
+    * Device Target Market 
 
-    * Cluster by year without oem name to see if I get anything interesting
+    * Cluster by year without oem name to see if I get anything interesting 
 
-    * Understand GSMArena Python Webscrape
-    * Execute Webscrape for Ratings, Saves and Hits, Reviews, Discussions
-    * Execute Python Webscrape for 2019-Present
-    * Determine which countries/regions manufacture focuses on
-    * When each Network/Protocal was adopted
-    * Which bands available each region and when
+    * Understand GSMArena Python Webscrape 
+    * Execute Webscrape for Ratings, Saves and Hits, Reviews, Discussions 
+    * Execute Python Webscrape for 2019-Present 
+    * Determine which countries/regions manufacture focuses on 
+    * When each Network/Protocal was adopted 
+    * Which bands available each region and when 
 
 # Functions & Classes:
     Cleaning:
