@@ -20,9 +20,11 @@ import statsmodels.api as sm
 from statsmodels.formula.api import ols
 
 from common import is_bool_dtype
+from clean import parse_date
+from clean import refactor_df
 
 pd.set_option('display.max_columns', None)
-
+pd.set_option('display.width', 500)
 
 class FEATURE(object):
     
@@ -33,15 +35,17 @@ class FEATURE(object):
         self.col_list = ['oem', 'feat_released_month', 'months_after_release', 
                                 'feat_removed_month', 'months_before_release']
 
-        self.df_device = None
+        # self.df_device = None
+        self.df_part = pd.DataFrame()
         self.df_feat = self._company_release()
+        
         
 
     def _clean_df(self):
         if 'Unnamed: 0' in self.df.columns:
            self.df.drop(columns=['Unnamed: 0'], inplace=True) 
 
-        return self.df
+        # return self.df
 
 
     def _choose_device(self):
@@ -53,7 +57,7 @@ class FEATURE(object):
             df_step = self.df.loc[~self.df.is_tablet, :]
             df_step = df_step.loc[~df_step.is_watch, :]
             self.df = df_step[df_step['network_technology'].notna()]
-        return self.df
+        # return self.df
     
 
     def _init_df_feat(self):
@@ -63,7 +67,7 @@ class FEATURE(object):
                                             columns = self.col_list)
         self.df_feat['oem'] = man_list
 
-        return self.df_feat
+        # return self.df_feat
 
 
     def _company_release(self):
@@ -75,7 +79,7 @@ class FEATURE(object):
         man_list = list(self.df['oem'].unique())
         
         for man in man_list:
-            df_step = self.df_device[self.df_device['oem'] == str(man)].sort_values(by='launch_announced')
+            df_step = self.df[self.df['oem'] == str(man)].sort_values(by='launch_announced')
             
             if is_bool_dtype(df_step[str(self.feature)]):
                 first_idx = df_step[df_step[str(self.feature)]==True].first_valid_index()
@@ -83,9 +87,9 @@ class FEATURE(object):
                 if first_idx == None:
                     pass
                 else:
-                    self.df_feat.groupby('oem').loc[str(man), 'feat_released_month'] = df_step.loc[first_idx, 'launch_announced']
+                    self.df_feat.loc[self.df_feat['oem'] == str(man), ['feat_released_month']] = df_step.loc[first_idx, 'launch_announced']
 
-                    self.df_feat.groupby('oem').loc[str(man), 'feat_removed_month'] = df_step.loc[last_idx, 'launch_announced']
+                    self.df_feat.loc[self.df_feat['oem'] == str(man), ['feat_removed_month']] = df_step.loc[last_idx, 'launch_announced']
 
             else:
                 first_idx = df_step[str(self.feature)].first_valid_index()
@@ -93,26 +97,32 @@ class FEATURE(object):
                 if first_idx == None:
                     pass
                 else:
-                    self.df_feat.groupby('oem').loc[str(man), 'feat_released_month'] = df_step.loc[first_idx, 'launch_announced']
+                    self.df_feat.loc[self.df_feat['oem'] == str(man), ['feat_released_month']] = df_step.loc[first_idx, 'launch_announced']
 
-                    self.df_feat.groupby('oem').loc[str(man), 'feat_removed_month'] = df_step.loc[last_idx, 'launch_announced']
+                    self.df_feat.loc[self.df_feat['oem'] == str(man), ['feat_removed_month']] = df_step.loc[last_idx, 'launch_announced']
+
+        self._calc_time_dif()
 
         return self.df_feat
 
-        
-        
+
+    def _calc_time_dif(self):
+        self.df_part = self.df_feat.fillna(0)
+        self.df_part = self.df_part[self.df_part['feat_released_month']!=0]
+
+        # return self.df_part
+
+'''
 if __name__ == '__main__':
 
     # Read in the Data after Clean
     sys.path.append('~/dsi/capstones/cap_3/')
 
     df_org = pd.read_csv('notebooks/output.csv')
-    df_org.drop(columns=['Unnamed: 0'], inplace=True)
-
-    feature_cols = ['oem', 'feat_released_month', 'months_after_release', 
-                    'feat_removed_month', 'months_before_release']
 
     feature_test = 'sensor_altimeter'
+    device_test = 'phone'
 
-    issac = FEATURE(df_org, feature_test, 'phone')
+    issac = FEATURE(df_org, feature_test, device_test)
 
+'''
