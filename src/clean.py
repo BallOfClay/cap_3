@@ -1,10 +1,3 @@
-# import pandas as pd
-# import numpy as np
-# import matplotlib.pyplot as plt
-# import scipy as stats
-# import re
-# import dateparser
-# import datetime
 
 import numpy as np
 import pandas as pd
@@ -22,6 +15,7 @@ import re
 import dateparser
 import datetime
 import math
+import json
 
 import researchpy as rp
 import statsmodels.api as sm
@@ -187,6 +181,7 @@ def refactor_time(df, col='launch_announced'):
 
     step_df['launch_announced'] = step_df['launch_announced'].apply(parse_date)
     step_df['launch_announced'] = step_df['launch_announced'].dt.to_period('M')
+    # step_df.loc[df['launch_announced'] >= '2006']
     
     return step_df
 

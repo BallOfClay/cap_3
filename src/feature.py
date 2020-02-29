@@ -14,6 +14,7 @@ import re
 import dateparser
 import datetime
 import math
+import json
 
 import researchpy as rp
 import statsmodels.api as sm
@@ -21,7 +22,12 @@ from statsmodels.formula.api import ols
 
 from common import is_bool_dtype
 from clean import parse_date
-from clean import refactor_df
+from clean import refactor_time
+
+# from operator import attrgetter
+# df['duration_dataset'] = (
+#     df['date_1'].dt.to_period('M') -
+#     df['date_2'].dt.to_period('M')).apply(attrgetter('n'))
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 500)
@@ -33,7 +39,7 @@ class FEATURE(object):
         self.feature = feature
         self.device = device
         self.col_list = ['oem', 'feat_released_month', 'months_after_release', 
-                                'feat_removed_month', 'months_before_release']
+                                'feat_removed_month', 'months_after_removal']
 
         # self.df_device = None
         self.df_part = pd.DataFrame()
@@ -45,6 +51,7 @@ class FEATURE(object):
         if 'Unnamed: 0' in self.df.columns:
            self.df.drop(columns=['Unnamed: 0'], inplace=True) 
 
+        # self.df = refactor_time(self.df)
         # return self.df
 
 
@@ -110,19 +117,32 @@ class FEATURE(object):
         self.df_part = self.df_feat.fillna(0)
         self.df_part = self.df_part[self.df_part['feat_released_month']!=0]
 
+        self.df_part.sort_values(['feat_released_month'], inplace=True)
+        for n in range(len(self.df_part['feat_released_month'])):
+            self.df_part.iloc[n, 2] = self.df_part.iloc[n, 1].dt.a - self.df_part.iloc[0, 1]
+
+        self.df_part.sort_values(['feat_removed_month'], inplace=True)
+        for n in range(len(self.df_part['feat_removed_month'])):
+            self.df_part.iloc[n, 4] = self.df_part.iloc[n, 3] - self.df_part.iloc[0, 3]
+
+        self.df_part.sort_values(['feat_released_month'], inplace=True)
         # return self.df_part
 
-'''
+
 if __name__ == '__main__':
 
     # Read in the Data after Clean
     sys.path.append('~/dsi/capstones/cap_3/')
 
     df_org = pd.read_csv('notebooks/output.csv')
+    df_org = refactor_time(df_org)
 
     feature_test = 'sensor_altimeter'
     device_test = 'phone'
 
     issac = FEATURE(df_org, feature_test, device_test)
 
-'''
+    # n_bins = 10
+
+    # fig, axes = plt.subplots(nrows=2, ncols=2)
+    # ax0, ax1, ax2, ax3 = axes.flatten()
