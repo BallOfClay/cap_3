@@ -241,6 +241,16 @@ if __name__=='__main__':
     a_removal_mean = np.mean(apple_removal_array)
     o_removal_mean = np.mean(other_removal_array)
 
+    a_release_var = np.var(apple_release_array)
+    o_release_var = np.var(other_release_array)
+    a_removal_var = np.var(apple_removal_array)
+    o_removal_var = np.var(other_removal_array)
+
+    a_release_std = np.std(apple_release_array)
+    o_release_std = np.std(other_release_array)
+    a_removal_std = np.std(apple_removal_array)
+    o_removal_std = np.std(other_removal_array)
+
     release_test = scipy.stats.ttest_ind(apple_release_array, other_release_array)
     removal_test = scipy.stats.ttest_ind(apple_removal_array, other_removal_array)
 

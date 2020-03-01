@@ -1,24 +1,24 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 import csv
 import sys, os
 sys.path.append('~/dsi/capstones/cap_3/')
 
-from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
-import pyspark as ps
+# from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
+# import pyspark as ps
 
-import scipy as stats
+# import scipy as stats
 import re
 import dateparser
 import datetime
 import math
 import json
 
-import researchpy as rp
-import statsmodels.api as sm
-from statsmodels.formula.api import ols
+# import researchpy as rp
+# import statsmodels.api as sm
+# from statsmodels.formula.api import ols
 
 from common import is_bool_dtype
 from clean import parse_date
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     # Read in the Data after Clean
     sys.path.append('~/dsi/capstones/cap_3/')
 
-    df_org = pd.read_csv('notebooks/output.csv')
+    df_org = pd.read_csv('results/output.csv')
     df_org = refactor_time(df_org)
 
     feature_test = 'sensor_altimeter'

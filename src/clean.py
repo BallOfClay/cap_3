@@ -1,25 +1,25 @@
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 import csv
 import sys, os
 sys.path.append('~/dsi/capstones/cap_3/')
 
-from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
-import pyspark as ps
+# from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
+# import pyspark as ps
 
-import scipy as stats
+# import scipy as stats
 import re
 import dateparser
 import datetime
 import math
-import json
+# import json
 
-import researchpy as rp
-import statsmodels.api as sm
-from statsmodels.formula.api import ols
+# import researchpy as rp
+# import statsmodels.api as sm
+# from statsmodels.formula.api import ols
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 500)
@@ -349,4 +349,4 @@ if __name__=='__main__':
                  category = 'sensor'
                 )
 
-    df.to_csv('output.csv')
+    df.to_csv('results/output.csv')
