@@ -8,13 +8,13 @@ sys.path.append('~/dsi/capstones/cap_3/')
 
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
 import pyspark as ps
-
-import scipy as stats
+import scipy
 import re
 import dateparser
 import datetime
 import math
 import json
+import itertools
 
 import researchpy as rp
 import statsmodels.api as sm
@@ -138,8 +138,8 @@ if __name__=='__main__':
     n_bins = 10
     dict_len = 250
     
-    fig, axes = plt.subplots(nrows=2, ncols=1)
-    ax0, ax1 = axes.flatten()
+    # fig, axes = plt.subplots(nrows=2, ncols=1)
+    # ax0, ax1 = axes.flatten()
 
     other_months_after_release = dict(zip(range(0, dict_len), [0]*dict_len))
     other_months_after_removal = dict(zip(range(0, dict_len), [0]*dict_len))
@@ -183,37 +183,83 @@ if __name__=='__main__':
     # ax0.set_title('different sample sizes')
     
 
-    with open('other_months_after_release_200228.json', 'w') as f:
+    with open('data/other_months_after_release_200228.json', 'w') as f:
         json.dump(other_months_after_release, f)
 
-    with open('other_months_after_removal_200228.json', 'w') as f:
+    with open('data/other_months_after_removal_200228.json', 'w') as f:
         json.dump(other_months_after_removal, f)
 
-    with open('apple_months_after_release_200228.json', 'w') as f:
+    with open('data/apple_months_after_release_200228.json', 'w') as f:
         json.dump(apple_months_after_release, f)
 
-    with open('apple_months_after_removal_200228.json', 'w') as f:
+    with open('data/apple_months_after_removal_200228.json', 'w') as f:
         json.dump(apple_months_after_removal, f)
 
     
     apple_release_array = []
+    # apple_release_array = np.array(None)
     other_release_array = []
+    # other_release_array = np.array(None)
 
     apple_removal_array = []
+    # apple_removal_array = np.array(apple_removal_array)
     other_removal_array = []
+    # other_removal_array = np.array(other_removal_array)
 
+    # breakpoint()q
     for key, val in apple_months_after_release.items():
         if val != 0:
+            # apple_release_array = np.array(apple_release_array)
             apple_release_array.append([key]*val)
+            # np.array(apple_release_array).flatten()
 
     for key, val in other_months_after_release.items():
-        other_release_array.append([key]*val)
+        if val != 0:
+            # other_release_array = np.array(other_release_array)
+            other_release_array.append([key]*val)
+            # nother_release_array.flatten()
 
     for key, val in apple_months_after_removal.items():
-        apple_removal_array.append([key]*val)
+        if val != 0:
+            # apple_removal_array = np.array(apple_removal_array)
+            apple_removal_array.append([key]*val)
+            # apple_removal_array.flatten()
 
     for key, val in other_months_after_removal.items():
-        other_removal_array.append([key]*val)
+        if val != 0:
+            # other_removal_array = np.array(other_removal_array)q
+            other_removal_array.append([key]*val)
+            # other_removal_array.flatten()
+
+    apple_release_array = list(itertools.chain(*apple_release_array))
+    other_release_array = list(itertools.chain(*other_release_array))
+    apple_removal_array = list(itertools.chain(*apple_removal_array))
+    other_removal_array = list(itertools.chain(*other_removal_array))
+
+    a_release_mean = np.mean(apple_release_array)
+    o_release_mean = np.mean(other_release_array)
+    a_removal_mean = np.mean(apple_removal_array)
+    o_removal_mean = np.mean(other_removal_array)
+
+    release_test = scipy.stats.ttest_ind(apple_release_array, other_release_array)
+    removal_test = scipy.stats.ttest_ind(apple_removal_array, other_removal_array)
+
+    
+    # fig = plt.figure(figsize=(12,4))
+    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
+
+    ax1.hist([apple_release_array, other_release_array], bins=20)
+    ax1.axvline(a_release_mean, color='green', label='apple mean dist.') 
+    ax1.axvline(o_release_mean, color='red', label='other mean dist.') 
+    ax2.hist([apple_removal_array, other_removal_array], bins=20)
+    ax2.axvline(a_removal_mean, color='green', label='apple mean dist.') 
+    ax2.axvline(o_removal_mean, color='red', label='other mean dist.') 
+
+    plt.show()
+
+
+
+
 
 
     '''
