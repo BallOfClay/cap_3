@@ -44,15 +44,14 @@ from operator import attrgetter
 
 if __name__=='__main__':
 
-
     # Read in the Data after Clean
     sys.path.append('~/dsi/capstones/cap_3/')
 
-    df_org = pd.read_csv('notebooks/output.csv')
+    df_org = pd.read_csv('results/output.csv')
     df_org = refactor_time(df_org)
     df_org = df_org.rename(columns = {'sound_3.5mm_jack':'sound_3_5mm_jack'})
 
-    df_org = df_org.loc[df_org['launch_announced'] >= '2006']
+    df_org = df_org.loc[df_org['launch_announced'].dt.year >= 2006]
 
     current_feat_list = [
         'network_gprs',
@@ -61,6 +60,7 @@ if __name__=='__main__':
         'main_camera_video',
         'selfie_camera_video',
         'sound_3_5mm_jack',
+        'comms_gps',
         'comms_radio',
         'network_3g_bands',
         'network_4g_bands',
@@ -79,7 +79,90 @@ if __name__=='__main__':
         'sensor_infrared_face_recognition',
         'comms_nfc',
         'main_camera_dual',
-        'main_camera_triple'
+        'main_camera_triple',
+        'main_camera_quad',
+        'body_water_resistant',
+        'body_waterproof',
+        'body_pay',
+        'body_stylus',
+        'body_kickstand',
+        'body_flashlight',
+        'display_type_LCD',
+        'display_type_OLED',
+        'display_type_AMOLED',
+        'display_type_TFT',
+        'display_type_STN',
+        'display_type_CSTN',
+        'display_type_ASV',
+        'display_type_IPS',
+        'display_type_resistive',
+        'display_type_capacitive',
+        'display_type_touchscreen',
+        'platform_cpu_octa-core',
+        'platform_cpu_hexa-core',
+        'platform_cpu_quad-core',
+        'platform_cpu_dual-core',
+        # 'comms_wlan_a',
+        # 'comms_wlan_b',
+        'comms_wlan_g',
+        'comms_wlan_i',
+        'comms_wlan_n',
+        'comms_wlan_ac',
+        'comms_wlan_ax',
+        'comms_wlan_dual-band',
+        'comms_wlan_hotspot',
+        'comms_wlan_DLNA',
+        'comms_wlan_Wi-Fi_Direct',
+        'comms_bluetooth_2.1',
+        'comms_bluetooth_2.2',
+        'comms_bluetooth_3.0',
+        'comms_bluetooth_3.1',
+        'comms_bluetooth_4.0',
+        'comms_bluetooth_4.1',
+        'comms_bluetooth_4.2',
+        'comms_bluetooth_5.0',
+        'comms_bluetooth_5.1',
+        'comms_bluetooth_A2DP',
+        'comms_bluetooth_EDR',
+        'comms_bluetooth_LE',
+        'comms_bluetooth_aptX',
+        'battery_removable',
+        'battery_li-ion',
+        'battery_li-po',
+        'main_camera_features_flash',
+        'main_camera_features_HDR',
+        'main_camera_features_panorama',
+        'sound_active_noise_cancelation',
+        'sound_dedicated_mic',
+        'sound_HDR',
+        'selfie_camera_features_flash',
+        'selfie_camera_features_HDR',
+        'battery_charging_fast',
+        'battery_charging_wireless',
+        'battery_charging_reverse',
+        'display_home_button',
+        'display_3D',
+        'body_build_plastic_back',
+        'body_build_glass_back',
+        'body_build_ceramic_back',
+        'network_technology_GSM',
+        'network_technology_CDMA',
+        'network_technology_HSPA',
+        'network_technology_EDVO',
+        'network_technology_LTE',
+        'network_technology_UMTS',
+        'network_TD-SCDMA',
+        'network_HSDPA',
+        'sound_loudspeaker_stereo',
+        'platform_cpu_single-core',
+        'camera_feature_wide',
+        'camera_feature_ultrawide',
+        'camera_feature_telephoto',
+        'camera_feature_zoom',
+        'camera_feature_depth',
+        'camera_feature_laser',
+        'camera_feature_ois',	
+        'camera_feature_pdaf'
     ]
 
     chosen_device = 'phone'
@@ -270,9 +353,7 @@ if __name__=='__main__':
 
     plt.show()
 
-
-
-
+    plt.savefig('results/features_release_and_removal.png')
 
 
     '''

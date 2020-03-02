@@ -46,17 +46,15 @@ useless_drop_words = [
     'misc_models',
     'misc_sar_eu',
     'misc_sar',
-    'memory',
     'sound_alert_types',
     'features_clock',
     'features_alarm',
     'features_languages',
     'selfie_camera_v1',
     'main_camera',
-    'main_camera_quad',
     'selfie_camera_triple',
     'main_camera_v1',
-    'main_camera_five'
+    'memory'
 ]
 
 apple_drop_words = [
@@ -71,7 +69,6 @@ apple_drop_words = [
 analysis_drop_words = [
     'body_dimensions',
     'memory_internal',
-    'battery',
     'battery_talk_time',
     'network_speed',
     'battery_stand-by',
@@ -83,10 +80,11 @@ analysis_drop_words = [
     'tests_battery_life',
     'battery_music_play',
     'selfie_camera',
-    'display',
     'features_browser',
     'comms_infrared_port',
-    'selfie_camera_dual'
+#     'selfie_camera_dual',
+    'camera',
+    'main_camera_dual_or_triple'
 ]
 
 
@@ -292,13 +290,6 @@ def extract_features(org_col, data_frame, new_cols, category,
 
         idx += 1
 
-# EXTRACTING - Sensors
-relevant_sensors = ['accelerometer', 'gyro', 'heart rate', 'fingerprint', 'compass',
-                    'proximity', 'barometer', 'spo2', 'iris scanner', 'gesture', 
-                    'tempurature', 'altimeter', 'infrared face recognition'
-                   ]
-
-
 '''
 # EXTRACTING - FINDING UNIQUE PHONE MODELS (NOT COMPLETE)
 
@@ -322,6 +313,52 @@ def unique_models(_list, split_1 = None, split_2 = None):
     return unique_list
 
 '''
+
+# EXTRACTING - Sensors
+relevant_sensors = ['accelerometer', 'gyro', 'heart rate', 'fingerprint', 'compass',
+                    'proximity', 'barometer', 'spo2', 'iris scanner', 'gesture', 
+                    'tempurature', 'altimeter', 'infrared face recognition'
+                   ]
+
+relevant_body = ['water resistant', 'waterproof', 'water proof', 'splash', 'pay', 'stylus', 
+                 'kickstand', 'flashlight']
+
+relevant_display_type = ['LCD', 'OLED', 'AMOLED', 'TFT', 'STN', 'CSTN', 'ASV', 'IPS',
+                        'resistive', 'capacitive', 'touchscreen']
+
+relevant_platform_cpu = ['octa-core', 'hexa-core', 'quad-core', 'dual-core']
+
+relevant_sound_loudspeaker = ['stereo']
+
+relevant_comms_wlan = ['a/', 'b/', '/g', '/i', '/n', '/ac', '/ax', 
+                       'dual-band', 'hotspot', 'DLNA', 'Wi-Fi Direct']
+
+relevant_comms_bluetooth = ['1.1', '1.2', '1.5', '2.0', '2.1', '2.2', '3.0', '3.1', 
+                      '4.0', '4.1', '4.2', '5.0', '5.1', 'A2DP', 'EDR', 'LE', 'aptX']
+
+relevant_comms_gps = ['GLONASS', 'A-GPS', 'GALILEO', 'BDS', 'QZSS']
+
+relevant_battery = ['removable', 'non-removable', 'li-ion', 'li-po']
+
+relevant_main_camera_features = ['flash', 'HDR', 'panorama']
+
+relevant_sound = ['active noise cancelation', 'dedicated mic', 'HDR']
+
+relevant_selfie_camera_features = ['flash', 'HDR']
+
+relevant_battery_charging = ['fast', 'wireless', 'reverse']
+
+relevant_display = ['home button', '3D']
+
+relevant_body_build = ['plastic back', 'glass back', 'back glass', 'ceramic back']
+
+relevant_main_camera = ['wide', 'ultrawide', 'telephoto', 'zoom', 
+                        'depth', 'laser', 'ois', 'pdaf']
+
+relevant_network_technology = ['GSM', 'CDMA', 'HSPA', 'EDVO', 'LTE', 'UMTS']
+
+relevant_network = ['TD-SCDMA', 'HSDPA']
+
 
 if __name__=='__main__':
 
@@ -347,6 +384,74 @@ if __name__=='__main__':
                  data_frame = df, 
                  new_cols = relevant_sensors, 
                  category = 'sensor'
+                )
+    
+    extract_features(org_col = 'body', 
+                 data_frame = df, 
+                 new_cols = relevant_body, 
+                 category = 'body'
+                )
+
+    df['body_waterproof'] = df[['body_waterproof', 'body_water_proof']].any(axis=1)
+    df['body_water_resistant'] = df[['body_water_resistant', 'body_splash']].any(axis=1)
+    df.drop(columns=['body_water_proof', 'body_splash'], inplace=True)
+
+    extract_features(org_col = 'display_type', 
+                 data_frame = df, 
+                 new_cols = relevant_display_type, 
+                 category = 'display_type'
+                )
+
+    extract_features(org_col = 'platform_cpu', 
+                 data_frame = df, 
+                 new_cols = relevant_platform_cpu, 
+                 category = 'platform_cpu'
+                )
+    
+    df.loc[(df['platform_cpu'].notnull()) & 
+       (df['platform_cpu_octa-core'] == False) &
+       (df['platform_cpu_hexa-core'] == False) &
+       (df['platform_cpu_quad-core'] == False) &
+       (df['platform_cpu_dual-core'] == False), 
+       'platform_cpu_single-core'] = True
+    df['platform_cpu_single-core'].fillna(False, inplace=True)
+
+    extract_features(org_col = 'sound_loudspeaker', 
+                 data_frame = df, 
+                 new_cols = relevant_sound_loudspeaker, 
+                 category = 'sound_loudspeaker'
+                )
+
+    extract_features(org_col = 'comms_wlan', 
+                 data_frame = df, 
+                 new_cols = relevant_comms_wlan, 
+                 category = 'comms_wlan'
+                )
+
+    df.rename(columns={'comms_wlan_a/':'comms_wlan_a', 
+                   'comms_wlan_b/':'comms_wlan_b', 
+                   'comms_wlan_/g':'comms_wlan_g', 
+                   'comms_wlan_/i':'comms_wlan_i', 
+                   'comms_wlan_/n':'comms_wlan_n',
+                   'comms_wlan_/ac':'comms_wlan_ac', 
+                   'comms_wlan_/ax':'comms_wlan_ax'})
+
+    extract_features(org_col = 'comms_bluetooth', 
+                 data_frame = df, 
+                 new_cols = relevant_comms_bluetooth, 
+                 category = 'comms_bluetooth'
+                )
+    
+    extract_features(org_col = 'comms_gps', 
+                 data_frame = df, 
+                 new_cols = relevant_comms_gps, 
+                 category = 'comms_gps'
+                )
+
+    extract_features(org_col = 'battery', 
+                 data_frame = df, 
+                 new_cols = relevant_battery, 
+                 category = 'battery'
                 )
 
     df.to_csv('results/output.csv')
