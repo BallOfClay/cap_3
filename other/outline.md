@@ -39,31 +39,31 @@ Website: https://www.gsmarena.com/
             main_camera_dual_or_triple
             main_camera_five
     * Encode features_sensors: accelerometer, gyro, heart rate, fingerprint, compass, proximity, barometer, SpO2, iris scanner, gesture, UV, tempurature, altimeter, infrared face recognition, face id !!!
-    * Encode display_type: LCD, OLED, AMOLED, TFT 
-    * Encode battery_charging: wireless charging, fast battery charging, reverse
-    * Encode body: water resistant, water proof, Pay, Stylus 
-    * Encode cameras: wide, ultrawide, telephoto, panorama 
-    * Encode main camera: LED, HDR 
-    * Encode network_technology 
-    * Encode wlan: a, b, g, i, n, ac, ax 
-    * Encode sound_loudspeaker 
+    * Encode display_type: LCD, OLED, AMOLED, TFT !
+    * Encode battery_charging: wireless charging, fast battery charging, reverse !
+    * Encode body: water resistant, water proof, Pay, Stylus !
+    * Encode cameras: wide, ultrawide, telephoto, panorama !
+    * Encode main camera: LED, HDR !
+    * Encode network_technology !
+    * Encode wlan: a, b, g, i, n, ac, ax !
+    * Encode sound_loudspeaker !
 
     * Parse out CPU speed 
     * Parse out pixel density and/or screen size 
     * Parse out battery capacities 
     * Parse out each antenna band 
     * Parse out network speed 
-    * Encode body/back characteristics 
+    * Encode body/back characteristics !/
 
     Attributes per Feature:
-    * Does Company Release Feature 
-    * Does Apple Ever Release Feature
+    * Does Company Release Feature !
+    * Does Apple Ever Release Feature !
     * When does a company first release a phone
-    * When is feature first released 
-    * When is feature first released by all companies 
-    * When is feature released by Apple 
+    * When is feature first released  !
+    * When is feature first released by all companies  
+    * When is feature released by Apple !
     * Is Apple First 
-    * Length of time spefic between company release and first company release 
+    * Length of time spefic between company release and first company release !
 
 # Data Addition Tasks:
     * Is Flagship 
@@ -86,10 +86,12 @@ Website: https://www.gsmarena.com/
         * Encode function based off of splits
 
     * FEATURE ANALYSIS CLASS:
-        * is eventual Apple feature
-        * is eventual Company feature
-        * is first manufacturer
-        * distance of company from first adoption company
+        * is eventual Apple feature !
+        * is eventual Company feature !
+        * is first manufacturer !
+        * distance of company from first adoption company !
+        * When does a company first release a phone 
+            * Adjust for this
         * Find product families via Levenshtein Distance
         * Anova Test
         * Set Timeframe
@@ -102,11 +104,13 @@ Website: https://www.gsmarena.com/
 # EDA Tasks:
     * Number of handsets released each year, theme: consolidation
     * When phones are released in year
-    * When new frequency bands are available vs network adoption
-    * Progression of megapixels cameras
+
     * Progression of display size
+    * Progression of megapixels cameras
+
     * Progression of screen pixels/resolution
     * Progression of battery capacity vs phone weight
+    * When new frequency bands are available vs network adoption
     * Progression of CPU Speed
         * Does CPU performance correlate to Moore's Law (may have to find way to equate speeds and number of transistors)
 
@@ -124,7 +128,8 @@ Website: https://www.gsmarena.com/
 
 
 # Statistical Tests:
-    * ANOVA, t-test
+    * ANOVA
+    * Two Sample t-test
 
 # Supervised Modeling:
     * KNN

@@ -235,25 +235,21 @@ def clean_video(video_camera_value):
     return video_camera_value
 
 
-'''
+
 # Cleaning - Screen Size
 
-def screen_refactor(s, split_char=' '):
-    s = str(s)
-    s = s.replace('| -', '')
-    s = s.replace('|', '')
-    s = s.strip()
+def screen_refactor(screen_val, split_char=' '):
     
+    if type(screen_val)!=str:
+        if math.isnan(screen_val):
+            return np.nan
+        
+    elif screen_val.startswith(','):
+        return np.nan
     
-    if isinstance(s, str):
-        split_s = s.split(split_char)
-        # try 
-        return split_s[0]
-    else:
-        return s
-    
-period_df['screen_in'] = period_df['display_size'].apply(screen_refactor)
-'''
+    elif isinstance(screen_val, str):
+        screen_split = screen_val.split(split_char)
+        return float(screen_split[0])
 
 
 # EXTRACTING - Extract Device Type
@@ -261,6 +257,9 @@ tablet_words = ['tab', 'tablet', 'pad', 'book']
 watch_words = ['watch', 'gear', 'fit', 'band']
 
 def parse_type(model_string, words_list):
+    
+    if model_string.startswith(','):
+        model_string = np.nan
 
     for check_word in words_list:
         if check_word in model_string.lower():
@@ -377,8 +376,14 @@ if __name__=='__main__':
 
     df['main_camera_video'] = df['main_camera_video'].apply(clean_video)
 
+    df['display_size'] = df['display_size'].apply(screen_refactor)
+
     df['is_tablet'] = df['model'].apply(lambda x: parse_type(x, tablet_words))
     df['is_watch'] = df['model'].apply(lambda x: parse_type(x, watch_words))
+
+    df.loc[df['display_size'] > 6.9, 'is_tablet'] = True
+    df.loc[(df['launch_announced'].dt.year >= 2011) & (df['display_size'] < 1.7), 'is_watch'] = True
+    df.loc[df['network_technology'].isnull(), 'is_tablet'] = True
 
     extract_features(org_col = 'features_sensors', 
                  data_frame = df, 

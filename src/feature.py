@@ -77,7 +77,7 @@ class FEATURE(object):
 
         # return self.df_feat
 
-    
+
 
     def _company_release(self):
         
@@ -137,14 +137,11 @@ if __name__ == '__main__':
     sys.path.append('~/dsi/capstones/cap_3/')
 
     df_org = pd.read_csv('results/output.csv')
-    df_org = refactor_time(df_org)
+    # df_org = refactor_time(df_org)
+    df_org['launch_announced'] = pd.to_datetime(df_org['launch_announced'])
+    df_org['launch_announced'] = df_org['launch_announced'].dt.to_period('M')
 
     feature_test = 'sensor_altimeter'
     device_test = 'phone'
 
-    issac = FEATURE(df_org, feature_test, device_test)
-
-    # n_bins = 10
-
-    # fig, axes = plt.subplots(nrows=2, ncols=2)
-    # ax0, ax1, ax2, ax3 = axes.flatten()
+    feat_altimeter = FEATURE(df_org, feature_test, device_test)

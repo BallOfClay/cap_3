@@ -30,17 +30,6 @@ import clean
 from collections import Counter
 from operator import attrgetter
 
-# df['duration_dataset'] = (
-#     df['date_1'].dt.to_period('M') -
-#     df['date_2'].dt.to_period('M')).apply(attrgetter('n'))
-
-
-# def time_delta_counter(df_feat, is_apple=False):
-    
-#     if is_apple:
-
-
-
 
 if __name__=='__main__':
 
@@ -48,10 +37,18 @@ if __name__=='__main__':
     sys.path.append('~/dsi/capstones/cap_3/')
 
     df_org = pd.read_csv('results/output.csv')
-    df_org = refactor_time(df_org)
+    df_org['launch_announced'] = pd.to_datetime(df_org['launch_announced'])
+    df_org['launch_announced'] = df_org['launch_announced'].dt.to_period('M')
+    # breakpoint()
+    # df_org = refactor_time(df_org)
+
     df_org = df_org.rename(columns = {'sound_3.5mm_jack':'sound_3_5mm_jack'})
 
     df_org = df_org.loc[df_org['launch_announced'].dt.year >= 2006]
+
+    oems_less_than_four = ['Noenode', 'Thuraya', 'Razer', 'Fujitsu Siemens', 'Benefon', 'XCute', 
+                            'Jolla', 'Nvidia', 'Qtek']
+    df_org = df_org[~df_org['oem'].isin(oems_less_than_four)]
 
     current_feat_list = [
         'network_gprs',
@@ -175,6 +172,10 @@ if __name__=='__main__':
 
     feat_obj_lst = [FEATURE(df_org, n, chosen_device) for n in current_feat_list]
     
+    # df_org['oem']
+
+    df_org.to_csv('results/selected_df.csv')
+
     df_dict = {}
     # breakpoint()
     for idx, feat in enumerate(current_feat_list):
@@ -183,46 +184,9 @@ if __name__=='__main__':
     #     other_object.add(obj)
 
 
-    '''
-    network_gprs = FEATURE(df_org, 'network_gprs', 'phone')
-
-    network_edge = FEATURE(df_org, 'network_edge', 'phone')
-
-    memory_card_slot = FEATURE(df_org, 'memory_card_slot', 'phone')
-
-    main_camera_video = FEATURE(df_org, 'main_camera_video', 'phone')
-
-    selfie_camera_video = FEATURE(df_org, 'selfie_camera_video', 'phone')
-
-    sound_3_5mm_jack = FEATURE(df_org, 'sound_3_5mm_jack', 'phone')
-
-    comms_radio = FEATURE(df_org, 'comms_radio', 'phone')
-
-    sensor_accelerometer = FEATURE(df_org, 'sensor_accelerometer', 'phone')
-    sensor_gyro = FEATURE(df_org, 'sensor_gyro', 'phone')
-    sensor_heart_rate = FEATURE(df_org, 'sensor_heart_rate', 'phone')
-    sensor_fingerprint = FEATURE(df_org, 'sensor_fingerprint', 'phone')
-    sensor_compass = FEATURE(df_org, 'sensor_compass', 'phone')
-    sensor_proximity = FEATURE(df_org, 'sensor_proximity', 'phone')
-    sensor_barometer = FEATURE(df_org, 'sensor_barometer', 'phone')
-    sensor_spo2 = FEATURE(df_org, 'sensor_spo2', 'phone')
-    sensor_iris_scanner = FEATURE(df_org, 'sensor_iris_scanner', 'phone')
-    sensor_gesture = FEATURE(df_org, 'sensor_gesture', 'phone')
-    sensor_tempurature = FEATURE(df_org, 'sensor_tempurature', 'phone')
-    sensor_altimeter = FEATURE(df_org, 'sensor_altimeter', 'phone')
-    sensor_infrared_face_recognition = FEATURE(df_org, 'sensor_infrared_face_recognition', 'phone')
-
-    comms_nfc = FEATURE(df_org, 'comms_nfc', 'phone')
-
-    main_camera_dual = FEATURE(df_org, 'main_camera_dual', 'phone')
-
-    main_camera_triple = FEATURE(df_org, 'main_camera_triple', 'phone')
-
-    '''
-
 
     n_bins = 10
-    dict_len = 250
+    dict_len = 200
     
     # fig, axes = plt.subplots(nrows=2, ncols=1)
     # ax0, ax1 = axes.flatten()
@@ -269,16 +233,16 @@ if __name__=='__main__':
     # ax0.set_title('different sample sizes')
     
 
-    with open('data/other_months_after_release_200228.json', 'w') as f:
+    with open('results/other_months_after_release_dict.json', 'w') as f:
         json.dump(other_months_after_release, f)
 
-    with open('data/other_months_after_removal_200228.json', 'w') as f:
+    with open('results/other_months_after_removal_dict.json', 'w') as f:
         json.dump(other_months_after_removal, f)
 
-    with open('data/apple_months_after_release_200228.json', 'w') as f:
+    with open('results/apple_months_after_release_dict.json', 'w') as f:
         json.dump(apple_months_after_release, f)
 
-    with open('data/apple_months_after_removal_200228.json', 'w') as f:
+    with open('results/apple_months_after_removal_dict.json', 'w') as f:
         json.dump(apple_months_after_removal, f)
 
     
@@ -322,6 +286,10 @@ if __name__=='__main__':
     apple_removal_array = list(itertools.chain(*apple_removal_array))
     other_removal_array = list(itertools.chain(*other_removal_array))
 
+    removal_bound = max(other_removal_array)
+    
+
+
     a_release_mean = np.mean(apple_release_array)
     o_release_mean = np.mean(other_release_array)
     a_removal_mean = np.mean(apple_removal_array)
@@ -342,39 +310,120 @@ if __name__=='__main__':
 
     
     # fig = plt.figure(figsize=(12,4))
-    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
+    fig, [ax1, ax2] = plt.subplots(nrows=2, ncols=1)
+    # ax2 = ax1.twinx()
 
     ax1.hist([apple_release_array, other_release_array], bins=20)
+    ax1.xlabel('(Feature Release OEM - First Release) per Feature per OEM (time-delta months)')
+    ax1.ylabel('Counts of Time-Deltas')
+    ax1.title('Months Between First Release & Other Manufacturer Adoption of All Features')
     ax1.axvline(a_release_mean, color='green', label='apple mean dist.') 
     ax1.axvline(o_release_mean, color='red', label='other mean dist.') 
-    ax2.hist([apple_removal_array, other_removal_array], bins=20)
+    ax1.legend(loc='upper right')
+
+    ax2.hist(apple_removal_array, bins=20)
+    ax2.hist(other_removal_array, bins=20)
+    ax2.xlabel('Time-Deltas between First Removal & Other Manufacturer Rem for All Features')
+    ax2.ylabel('Counts of Time-Deltas')
+    ax2.title('Months Between First Removal & Other Manufacturer Removal of All Features')
     ax2.axvline(a_removal_mean, color='green', label='apple mean dist.') 
     ax2.axvline(o_removal_mean, color='red', label='other mean dist.') 
+    ax2.legend(loc='upper right')
 
     plt.show()
 
     plt.savefig('results/features_release_and_removal.png')
 
 
-    '''
-    fig = plt.figure(figsize=(12,4))
+    # PRICE OVER TIME
+    fig2 = plt.figure(figsize=(12,4))
 
-    ax1 = df_org.groupby('launch_announced').mean()['misc_price'].plot(
-        xlim=[pd.Timestamp('2005-08-01'), pd.Timestamp('2017-10-01')], ylim=[0, 750])
+    ax3 = df_org.groupby('launch_announced').mean()['misc_price'].plot(
+        xlim=[pd.Timestamp('2005-08-01'), pd.Timestamp('2019-10-01')])
 
-    ax1.set_ylabel('Average Price (USD)')
-    ax1.set_xlabel('Month Announced')
+    ax3.set_ylabel('Average Price (USD)')
+    ax3.set_xlabel('Month Announced')
+
+    plt.show()
+
+    plt.savefig('results/price_over_time.png')
 
 
     # Average Screen Size Over Time
-    fig2 = plt.figure(figsize=(12,4))
+    fig3 = plt.figure(figsize=(12,4))
 
-    ax2 = df_org.groupby('launch_announced').mean()['screen_in'].plot(
-        xlim=[pd.Timestamp('2005-08-01'), pd.Timestamp('2017-10-01')])
+    ax4 = df_org.groupby('launch_announced').mean()['display_size'].plot(
+        xlim=[pd.Timestamp('2005-08-01'), pd.Timestamp('2019-10-01')])
 
-    ax2.set_ylabel('Screen Size (in)')
-    ax2.set_xlabel('Month Announced')
+    ax4.set_ylabel('Screen Size (in)')
+    ax4.set_xlabel('Month Announced')
 
+    plt.show()
+
+    plt.savefig('results/screen_size_over_time.png')
+
+
+    # NUMBER OF PHONES RELEASED EACH Month
+    fig4 = plt.figure(figsize=(12,4))
+
+    ax5 = df_org.groupby('launch_announced').plot(
+        xlim=[pd.Timestamp('2005-08-01'), pd.Timestamp('2019-10-01')])
+
+    ax5.set_ylabel('Screen Size (in)')
+    ax5.set_xlabel('Month Announced')
+
+    plt.show()
+
+    plt.savefig('results/screen_size_over_time.png')
+
+
+    # NUMBER OF FEATURES OVER TIME
+
+    fig5, ax6 = plt.subplots()
+    ax6.hist(apple_release_array, color='yellow')
+    ax6.set_ylabel('Apple Counts (Time-Deltas)')
+    ax6.xlabel('(OEM Feature Release - First Release) per Feature per Company (time-delta months)') 
+    ax6.title('Months Between First Release & Other Manufacturer Adoption of All Features')
+    ax6.axvline(a_release_mean, color='green', label='apple mean dist.') 
+
+    # n, bins, patches = ax6.hist(apple_release_array, other_release_array])
+    # ax6.xlabel('(Apple Feature Release - First Release) per Feature (time-delta months)')
+    # ax7.xlabel('(Other Feature Release - First Release) per Feature (time-delta months)')
+
+    ax7 = ax6.twinx()
+    ax6.hist(other_release_array, color='blue')
+    ax7.set_ylabel('Other Counts (Time-Deltas)')
+    ax7.axvline(o_release_mean, color='red', label='other mean dist.') 
+    ax6.legend(loc='upper right')
+
+    plt.show()
+
+    plt.savefig('results/release_distribuitions.png')
+
+
+    '''
+    fig5, ax6 = plt.subplots()
+    ax7 = ax6.twinx()
+
+    ax6.hist([apple_release_array, other_release_array], color=colors)
+    n, bins, patches = ax6.hist(apple_release_array, other_release_array])
+
+
+    ax6.xlabel('(Apple Feature Release - First Release) per Feature (time-delta months)')
+    ax7.xlabel('(Other Feature Release - First Release) per Feature (time-delta months)')
+    ax6.set_ylabel('Apple Counts (Time-Deltas)')
+    ax7.set_ylabel('Other Counts (Time-Deltas)')
+    ax6.title('Months Between First Release & Other Manufacturer Adoption of All Features')
+    ax6.axvline(a_release_mean, color='green', label='apple mean dist.') 
+    ax7.axvline(o_release_mean, color='red', label='other mean dist.') 
+    ax6.legend(loc='upper right')
+    '''
+
+
+
+
+
+    '''
     # Average Battery Capacity Over Time
     ax3 = df_org.groupby('launch_announced').mean()['battery'].plot(
         xlim=[pd.Timestamp('2005-08-01'), pd.Timestamp('2017-10-01')])

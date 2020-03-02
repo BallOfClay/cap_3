@@ -142,9 +142,5 @@ if __name__ == '__main__':
     feature_test = 'sensor_altimeter'
     device_test = 'phone'
 
-    issac = FEATURE(df_org, feature_test, device_test)
+    feat_altimeter = FEATURE(df_org, feature_test, device_test)
 
-    # n_bins = 10
-
-    # fig, axes = plt.subplots(nrows=2, ncols=2)
-    # ax0, ax1, ax2, ax3 = axes.flatten()

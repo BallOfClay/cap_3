@@ -2,6 +2,8 @@ data/
 # other/
 .DS_Store
 repos/
+notebooks/unused_code.ipynb
+notebooks/unused_test.ipynb
 
 
 # Byte-compiled / optimized / DLL files

@@ -215,10 +215,14 @@
 
     features:
         player
-        ANT+
+        # ANT+
         language commands and dictation
-        player
         voice
+        reader
+        tv
+        organizer
+        viewer
+        editor
 
     platform_gpu:
         adreno
