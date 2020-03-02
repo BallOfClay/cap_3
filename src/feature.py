@@ -32,7 +32,7 @@ from clean import refactor_time
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 500)
 
-class FEATURE(object):
+class FEATURE_OBJ(object):
     
     def __init__(self, df, feature, device):
         self.df = df
@@ -121,7 +121,7 @@ class FEATURE(object):
 
         self.df_part.sort_values(['feat_released_month'], inplace=True)
         for n in range(len(self.df_part['feat_released_month'])):
-            self.df_part.iloc[n, 2] = self.df_part.iloc[n, 1].dt.a - self.df_part.iloc[0, 1]
+            self.df_part.iloc[n, 2] = self.df_part.iloc[n, 1] - self.df_part.iloc[0, 1]
 
         self.df_part.sort_values(['feat_removed_month'], inplace=True)
         for n in range(len(self.df_part['feat_removed_month'])):
@@ -137,11 +137,11 @@ if __name__ == '__main__':
     sys.path.append('~/dsi/capstones/cap_3/')
 
     df_org = pd.read_csv('results/output.csv')
-    # df_org = refactor_time(df_org)
-    df_org['launch_announced'] = pd.to_datetime(df_org['launch_announced'])
-    df_org['launch_announced'] = df_org['launch_announced'].dt.to_period('M')
+    df_org = refactor_time(df_org)
+    # df_org['launch_announced'] = pd.to_datetime(df_org['launch_announced'])
+    # df_org['launch_announced'] = df_org['launch_announced'].dt.to_period('M')
 
     feature_test = 'sensor_altimeter'
     device_test = 'phone'
 
-    feat_altimeter = FEATURE(df_org, feature_test, device_test)
+    feat_altimeter = FEATURE_OBJ(df_org, feature_test, device_test)
