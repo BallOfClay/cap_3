@@ -27,25 +27,25 @@ Website: https://www.gsmarena.com/
             selfie_camera_features
             tests_camera
             selfie_camera
-            * main_camera_dual
+            * main_camera_dual 
             selfie_camera_dual
             camera
-            * main_camera_triple
+            * main_camera_triple 
             selfie_camera_v1
             main_camera
-            * main_camera_quad
+            * main_camera_quad 
             selfie_camera_triple
             main_camera_v1
             main_camera_dual_or_triple
             main_camera_five
     * Encode features_sensors: accelerometer, gyro, heart rate, fingerprint, compass, proximity, barometer, SpO2, iris scanner, gesture, UV, tempurature, altimeter, infrared face recognition, face id !!!
     * Encode display_type: LCD, OLED, AMOLED, TFT 
-    * Encode battery_charging: wireless charging, fast battery charging 
+    * Encode battery_charging: wireless charging, fast battery charging, reverse
     * Encode body: water resistant, water proof, Pay, Stylus 
     * Encode cameras: wide, ultrawide, telephoto, panorama 
     * Encode main camera: LED, HDR 
     * Encode network_technology 
-    * Encode wlan: a, b, g, n, ac, ax 
+    * Encode wlan: a, b, g, i, n, ac, ax 
     * Encode sound_loudspeaker 
 
     * Parse out CPU speed 
@@ -57,7 +57,8 @@ Website: https://www.gsmarena.com/
 
     Attributes per Feature:
     * Does Company Release Feature 
-    * Does Apple Ever Release Feature 
+    * Does Apple Ever Release Feature
+    * When does a company first release a phone
     * When is feature first released 
     * When is feature first released by all companies 
     * When is feature released by Apple 

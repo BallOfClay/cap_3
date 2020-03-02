@@ -1,87 +1,209 @@
-Features I can use:
+## Features I Have Extracted:
 
-network_gprs
+    network_gprs
 
-network_edge
+    network_edge
 
-memory_card_slot
+    memory_card_slot
 
-main_camera_video
+    main_camera_video
 
-selfie_camera_video
+    selfie_camera_video
 
-sound_3.5mm_jack
+    sound_3.5mm_jack
 
-comms_radio
+    comms_radio
 
-sensor_accelerometer
-sensor_gyro
-sensor_heart_rate
-sensor_fingerprint
-sensor_compass
-sensor_proximity
-sensor_barometer
-sensor_spo2
-sensor_iris_scanner
-sensor_gesture
-sensor_tempurature
-sensor_altimeter
-sensor_infrared_face_recognition
+    sensor_accelerometer
+    sensor_gyro
+    sensor_heart_rate
+    sensor_fingerprint
+    sensor_compass
+    sensor_proximity
+    sensor_barometer
+    sensor_spo2
+    sensor_iris_scanner
+    sensor_gesture
+    sensor_tempurature
+    sensor_altimeter
+    sensor_infrared_face_recognition
 
-comms_nfc
+    comms_nfc
 
-main_camera_dual
+    main_camera_dual
 
-main_camera_triple
+    main_camera_triple
 
 
 
-Features to extract:
+## Features to extract:
 
-water resistant
-waterproof
-pay
-stylus
-kickstand
-splah
-flashlight
+    body:
+        water resistant
+        waterproof, water proof
+        pay
+        stylus
+        kickstand
+        splah
+        flashlight
 
-LCD
-OLED
-AMOLED
-TFT
-touch/touchscreen
-STN
-CSTN
-ASV
-IPS
+    display_type:
+        LCD
+        OLED
+        AMOLED
+        TFT
+        STN
+        CSTN
+        ASV
+        IPS
+        resistive
+        capacitive
+        touchscreen
 
-dual-core
-quad-core
-hexa-core
-octa-core
+    platform_cpu:
+        dual-core
+        quad-core
+        hexa-core
+        octa-core
+        "other single-core"
 
-a
-b
-g
-n
-ac
-ax
+    comms_wlan:
+        a
+        b
+        g
+        i
+        n
+        ac
+        ax
+        dual-band
+        hotspot
+        DLNA
+        Wi-Fi Direct
 
-removable
-non-removable
+    comms_bluetooth:
+        1.1
+        1.2
+        1.5
+        2.0
+        2.1
+        2.2
+        3.0
+        3.1
+        4.0
+        4.1
+        4.2
+        5.0
+        5.1
+        A2DP
+        EDR
+        LE
+        aptX
 
-flash
-HDR
-panorama
+    comms_gps:
+        yes/no
+        GLONASS
+        A-GPS 
+        GALILEO
+        BDS
+        QZSS
 
-active noise cancelation
-dedicated mic
-3D
+    battery:
+        removable
+        non-removable
+        li-ion 
+        li-po 
+        capacity mAh
 
-flash
-HDR
+    main_camera_features:
+        flash
+        HDR
+        panorama
 
-fast
-wireless
-reverse
+    sound:
+        active noise cancelation
+        dedicated mic
+        3D
+
+    selfie_camera_features:
+        flash
+        HDR
+
+    battery_charging:
+        fast
+        wireless
+        reverse
+
+    body_build:
+        plastic back
+        glass back 
+        back glass
+        ceramic back
+
+    main_camera_single/dual/triple/quad/five
+        wide
+        ultrawide
+        telephoto
+        zoom
+
+
+
+## Features to Extract Eventually:
+
+    launch_status --> launch date:
+
+    body_weight:
+
+    display_size
+        in inches
+        screen-to-body ratio
+
+    display_resolution:
+        pixel multiplictation
+        ppi density
+
+    platform_os:
+        windows
+        android
+        ios
+
+    platform_cpu:
+        intel
+        qualcomm
+        hisilicon
+        mediatek
+        spreadtrum
+        ti 
+        exynos
+        hummingbird
+        allwinner
+        broadcomm
+        marvell
+        hauwei
+        nvidia
+        rockchip
+        
+    memory_internal:
+        storage:
+
+        memory/RAM:
+
+    sound_loudspeaker:
+        yes/no
+        stereo
+
+    platform_gpu:
+        adreno
+        mali 
+        broadcom 
+        powervr 
+        ULP
+        Power
+        vivante
+
+    display_protection:
+        gorilla glass 1,2,3,4,5,6, DX+, SR+
+        dragontail
+        shatter
+        scratch
+        sapphire
+        oleophobic

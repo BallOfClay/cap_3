@@ -38,8 +38,9 @@ class FEATURE(object):
         self.df = df
         self.feature = feature
         self.device = device
-        self.col_list = ['oem', 'feat_released_month', 'months_after_release', 
-                                'feat_removed_month', 'months_after_removal']
+        self.col_list = ['oem', # 'oem_first_release',
+                        'feat_released_month', 'months_after_release', 
+                        'feat_removed_month', 'months_after_removal']
 
         # self.df_device = None
         self.df_part = pd.DataFrame()
@@ -76,6 +77,7 @@ class FEATURE(object):
 
         # return self.df_feat
 
+    
 
     def _company_release(self):
         
