@@ -6,15 +6,15 @@ import csv
 import sys, os
 sys.path.append('~/dsi/capstones/cap_3/')
 
-# from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
-# import pyspark as ps
-
 # import scipy as stats
 import re
 import dateparser
 import datetime
 import math
 import json
+
+# from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
+# import pyspark as ps
 
 # import researchpy as rp
 # import statsmodels.api as sm
@@ -32,9 +32,28 @@ from clean import refactor_time
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 500)
 
-class FEATURE_OBJ(object):
-    
+class FEATURE(object):
+    '''
+    For a given feature, and given device type, class determines:
+        which device has this feature
+        when each oem released the feature
+        when oem released feature in respects to first feature release
+        when each oem removed the feature 
+        when oem removed feature in respects to first feature removal
+    '''
+
     def __init__(self, df, feature, device):
+        '''
+        Parameters
+        ----------
+        df : data-frame
+            The data-frame to parse features from.
+        feature : string-like
+            Name of feature to be parsed
+        device : string-like
+            string denoting 'phone', 'tablet', 'watch'
+        ''' 
+
         self.df = df
         self.feature = feature
         self.device = device
@@ -46,17 +65,20 @@ class FEATURE_OBJ(object):
         self.df_part = pd.DataFrame()
         self.df_feat = self._company_release()
         
-        
-
     def _clean_df(self):
+        '''
+        Clean dataframe prior to parsing
+        '''
+
         if 'Unnamed: 0' in self.df.columns:
            self.df.drop(columns=['Unnamed: 0'], inplace=True) 
 
-        # self.df = refactor_time(self.df)
-        # return self.df
-
 
     def _choose_device(self):
+        '''
+        Choose device type to encode
+        '''
+
         if self.device == 'tablet':
             self.df = self.df.loc[self.df['is_tablet'], :]
         elif self.device == 'watch':
@@ -69,18 +91,22 @@ class FEATURE_OBJ(object):
     
 
     def _init_df_feat(self):
+        '''
+        Initializes Feature specific Data-Frame
+        '''
+
         man_list = list(self.df['oem'].unique())
         self.df_feat = pd.DataFrame(data=np.full([len(man_list), len(self.col_list)], 
                                                 fill_value = np.nan),
                                             columns = self.col_list)
         self.df_feat['oem'] = man_list
 
-        # return self.df_feat
-
-
 
     def _company_release(self):
-        
+        '''
+        Determines which companies have released and removed a given feature, and on which months.
+        '''
+
         self._clean_df()
         self._choose_device()
         self._init_df_feat()
@@ -116,6 +142,10 @@ class FEATURE_OBJ(object):
 
 
     def _calc_time_dif(self):
+        '''
+        Encodes time-deltas between each oem release (or removal) of feature, the first oem to do so.
+        '''
+
         self.df_part = self.df_feat.fillna(0)
         self.df_part = self.df_part[self.df_part['feat_released_month']!=0]
 
@@ -128,20 +158,21 @@ class FEATURE_OBJ(object):
             self.df_part.iloc[n, 4] = self.df_part.iloc[n, 3] - self.df_part.iloc[0, 3]
 
         self.df_part.sort_values(['feat_released_month'], inplace=True)
-        # return self.df_part
 
 
 if __name__ == '__main__':
 
     # Read in the Data after Clean
+    '''
     sys.path.append('~/dsi/capstones/cap_3/')
 
     df_org = pd.read_csv('results/output.csv')
-    df_org = refactor_time(df_org)
-    # df_org['launch_announced'] = pd.to_datetime(df_org['launch_announced'])
-    # df_org['launch_announced'] = df_org['launch_announced'].dt.to_period('M')
+
+    df_org['launch_announced'] = pd.to_datetime(df_org['launch_announced'])
+    df_org['launch_announced'] = df_org['launch_announced'].dt.to_period('M')
 
     feature_test = 'sensor_altimeter'
     device_test = 'phone'
 
-    feat_altimeter = FEATURE_OBJ(df_org, feature_test, device_test)
+    feat_altimeter = FEATURE(df_org, feature_test, device_test)
+    '''

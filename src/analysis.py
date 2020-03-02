@@ -1,14 +1,13 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+plt.style.use('seaborn')
 import seaborn as sns
 
 import csv
 import sys, os
 sys.path.append('~/dsi/capstones/cap_3/')
 
-# from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
-# import pyspark as ps
 import scipy
 import re
 import dateparser
@@ -17,15 +16,18 @@ import math
 import json
 import itertools
 
+# from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
+# import pyspark as ps
+
 # import researchpy as rp
 # import statsmodels.api as sm
 # from statsmodels.formula.api import ols
 
-from src.common import is_bool_dtype
-from src.clean import parse_date
-from src.clean import refactor_time
-from src.feature import FEATURE_OBJ
-import src.clean
+from common import is_bool_dtype
+from clean import parse_date
+from clean import refactor_time
+from feature import FEATURE
+import clean
 
 from collections import Counter
 from operator import attrgetter
@@ -35,23 +37,19 @@ if __name__=='__main__':
 
     # Read in the Data after Clean
     sys.path.append('~/dsi/capstones/cap_3/')
-
     df_org = pd.read_csv('results/output.csv')
+
     df_org['launch_announced'] = pd.to_datetime(df_org['launch_announced'])
     df_org['launch_announced'] = df_org['launch_announced'].dt.to_period('M')
-    # breakpoint()
-    # df_org = refactor_time(df_org)
 
-    df_org = df_org.rename(columns = {'sound_3.5mm_jack':'sound_3_5mm_jack'})
+    df_org = df_org.rename(columns = {'sound_3.5mm_jack':'sound_3_5mm_jack'})  # Rename 3.5 mm jack
 
-    df_org = df_org.loc[df_org['launch_announced'].dt.year >= 2006]
+    df_org = df_org.loc[df_org['launch_announced'].dt.year >= 2006]  #
 
     oems_less_than_four = ['Noenode', 'Thuraya', 'Razer', 'Fujitsu Siemens', 'Benefon', 'XCute', 
                             'Jolla', 'Nvidia', 'Qtek']
     df_org = df_org[~df_org['oem'].isin(oems_less_than_four)]
-    # breakpoint()
 
-    df_org.to_csv('results/selected_df.csv')
 
     current_feat_list = [
         'network_gprs',
@@ -166,34 +164,21 @@ if __name__=='__main__':
     ]
 
     chosen_device = 'phone'
-    # breakpoint()
-    # for col in current_feat_list:
-    #     # f'col'= FEATURE(df_org, col, 'phone')
-    #     feat_name = exec("%s = %d" % (col,2))
-    #     print(feat_name)
-    #     feat_name = FEATURE(df_org, col, chosen_device)
+    
+    feat_obj_lst = [FEATURE(df_org, n, chosen_device) for n in current_feat_list]
 
-    
-    feat_obj_lst = [FEATURE_OBJ(df_org, n, chosen_device) for n in current_feat_list]
-    
-    # df_org['oem']
-
-    
+    # Creates Phone specific dataframe for review
+    df_phone = df_org.loc[(df_org['is_tablet'] == False) & (df_org['is_watch'] == False)]
+    df_phone.to_csv('results/selected_df.csv')
 
     df_dict = {}
-    # breakpoint()
     for idx, feat in enumerate(current_feat_list):
         df_dict[feat] = feat_obj_lst[idx].df_part
-    # for obj in objs:
-    #     other_object.add(obj)
 
 
-
+    # Creates Dictionaries Counters to count time-deltas for all features
     n_bins = 10
     dict_len = 200
-    
-    # fig, axes = plt.subplots(nrows=2, ncols=1)
-    # ax0, ax1 = axes.flatten()
 
     other_months_after_release = dict(zip(range(0, dict_len), [0]*dict_len))
     other_months_after_removal = dict(zip(range(0, dict_len), [0]*dict_len))
@@ -201,19 +186,13 @@ if __name__=='__main__':
     apple_months_after_release = dict(zip(range(0, dict_len), [0]*dict_len))
     apple_months_after_removal = dict(zip(range(0, dict_len), [0]*dict_len))
     
-    # breakpoint()
     for key_feat, df_part_feat in df_dict.items():
-        # n_df_part = feat_obj_lst[eval(n)].df_part
-        # n_df_part = eval(n).df_part
+
         df_part_feat['months_after_release'] = df_part_feat['months_after_release'].apply(attrgetter('n'))
         df_part_feat['months_after_removal'] = df_part_feat['months_after_removal'].apply(attrgetter('n'))
-        # breakpoint()
+
         if df_part_feat['oem'].str.contains('Apple').any():
-            # apple_months_after_release[df_part_feat[df_part_feat['oem']=='Apple']['months_after_release']] += 1
-            # apple_months_after_removal[df_part_feat[df_part_feat['oem']=='Apple']['months_before_removal']] += 1
-            # df_part_feat = df_part_feat[df_part_feat[df_part_feat['oem']!='Apple']]
-            
-            # breakpoint()
+
             n_months = df_part_feat.loc[df_part_feat['oem']=='Apple', 'months_after_release']
             apple_months_after_release[int(n_months)] += 1
             
@@ -221,21 +200,12 @@ if __name__=='__main__':
             apple_months_after_removal[int(n_months)] += 1
             
             df_part_feat = df_part_feat[df_part_feat['oem']!='Apple']
-            # breakpoint()
+
             for n_month in df_part_feat['months_after_release']:
-                # if n_df_part['months_after_release']
-                # breakpoint()
-                # n_month = n_month.dt.astype(int)
                 other_months_after_release[int(n_month)] += 1
 
             for n_month in df_part_feat['months_after_removal']:
-                # n_month = n_month.apply(attrgetter('n'))
                 other_months_after_removal[int(n_month)] += 1
-
-
-    # ax0.hist(x_multi, n_bins, histtype='bar')
-    # ax0.set_title('different sample sizes')
-    
 
     with open('results/other_months_after_release_dict.json', 'w') as f:
         json.dump(other_months_after_release, f)
@@ -250,40 +220,28 @@ if __name__=='__main__':
         json.dump(apple_months_after_removal, f)
 
     
+    # Creates flattened arrays from Dictionary Counters
     apple_release_array = []
-    # apple_release_array = np.array(None)
     other_release_array = []
-    # other_release_array = np.array(None)
 
     apple_removal_array = []
-    # apple_removal_array = np.array(apple_removal_array)
     other_removal_array = []
-    # other_removal_array = np.array(other_removal_array)
 
-    # breakpoint()q
     for key, val in apple_months_after_release.items():
         if val != 0:
-            # apple_release_array = np.array(apple_release_array)
             apple_release_array.append([key]*val)
-            # np.array(apple_release_array).flatten()
 
     for key, val in other_months_after_release.items():
         if val != 0:
-            # other_release_array = np.array(other_release_array)
             other_release_array.append([key]*val)
-            # nother_release_array.flatten()
 
     for key, val in apple_months_after_removal.items():
         if val != 0:
-            # apple_removal_array = np.array(apple_removal_array)
             apple_removal_array.append([key]*val)
-            # apple_removal_array.flatten()
 
     for key, val in other_months_after_removal.items():
         if val != 0:
-            # other_removal_array = np.array(other_removal_array)q
             other_removal_array.append([key]*val)
-            # other_removal_array.flatten()
 
     apple_release_array = list(itertools.chain(*apple_release_array))
     other_release_array = list(itertools.chain(*other_release_array))
@@ -293,7 +251,7 @@ if __name__=='__main__':
     removal_bound = max(other_removal_array)
     
 
-
+    # Determine Mean, Variance and Standard Deviations of Flattened Arrays
     a_release_mean = np.mean(apple_release_array)
     o_release_mean = np.mean(other_release_array)
     a_removal_mean = np.mean(apple_removal_array)
@@ -309,91 +267,97 @@ if __name__=='__main__':
     a_removal_std = np.std(apple_removal_array)
     o_removal_std = np.std(other_removal_array)
 
-    release_test = scipy.stats.ttest_ind(apple_release_array, other_release_array)
-    removal_test = scipy.stats.ttest_ind(apple_removal_array, other_removal_array)
+    release_test = scipy.stats.ttest_ind(apple_release_array, other_release_array, equal_var=False)
+    removal_test = scipy.stats.ttest_ind(apple_removal_array, other_removal_array, equal_var=False)
 
-    
-    fig = plt.figure(figsize=(12,4))
-    fig, ax1 = plt.subplots()
-    # ax2 = ax1.twinx()
+    with open('results/release_ttest.json', 'w') as f:
+        json.dump(release_test, f)
 
+    with open('results/removal_ttest.json', 'w') as f:
+        json.dump(removal_test, f)
+
+
+    # Creates Plot comparing Apple Release behavior versus the competition
+    fig, ax1 = plt.subplots(figsize=(12,8))
     ax1.hist([apple_release_array, other_release_array], bins=20)
-    ax1.set_xlabel('(Feature Release OEM - First Release) per Feature per OEM (time-delta months)')
-    ax1.set_ylabel('Counts of Time-Deltas')
-    ax1.set_title('Months Between First Release & Other Manufacturer Adoption of All Features')
-    ax1.axvline(a_release_mean, color='green', label='apple mean dist.') 
-    ax1.axvline(o_release_mean, color='red', label='other mean dist.') 
-    ax1.legend(loc='upper right')
+
+    ax1.set_xlabel('Time-Delta between each OEM Release & First Release (months)', size = 18)
+    ax1.set_ylabel('Counts of Time-Deltas', size = 18)
+    ax1.set_title('Months Between First Release & Other Manufacturer Adoption of All Features', size = 24)
+    ax1.axvline(a_release_mean, color='blue', label='apple mean', linestyle='--', dashes=(5, 5)) 
+    ax1.axvline(o_release_mean, color='green', label='other mean', linestyle='--', dashes=(5, 10)) 
+    ax1.legend(loc='upper right', framealpha = 0.5)
+    for tick in ax1.xaxis.get_major_ticks():
+        tick.label.set_fontsize(14) 
+    for tick in ax1.yaxis.get_major_ticks():
+        tick.label.set_fontsize(14) 
 
     plt.show()
-
     plt.savefig('results/features_release.png')
 
-    fig2 = plt.figure(figsize=(12,4))
-    fig2, ax2 = plt.subplots()
-
+    # Creates Plot comparing Apple Removal behavior versus the competition
+    fig2, ax2 = plt.subplots(figsize=(12,8))
     ax2.hist([apple_removal_array, other_removal_array], bins=20)
-    ax2.set_xlabel('Time-Deltas between First Removal & Other Manufacturer Rem for All Features')
-    ax2.set_ylabel('Counts of Time-Deltas')
-    ax2.set_title('Months Between First Removal & Other Manufacturer Removal of All Features')
-    ax2.axvline(a_removal_mean, color='green', label='apple mean dist.') 
-    ax2.axvline(o_removal_mean, color='red', label='other mean dist.') 
-    ax2.legend(loc='upper right')
+
+    ax2.set_xlabel('Time-Delta between each OEM Removal & First Removal (months)', size = 18)
+    ax2.set_ylabel('Counts of Time-Deltas', size = 18)
+    ax2.set_title('Months Between First Removal & Other Manufacturer Removal of All Features', size = 24)
+    ax2.axvline(a_removal_mean, color='blue', label='apple mean', linestyle='--', dashes=(5, 5)) 
+    ax2.axvline(o_removal_mean, color='green', label='other mean', linestyle='--', dashes=(5, 10)) 
+    ax2.legend(loc='upper right', framealpha = 0.5)
+    for tick in ax2.xaxis.get_major_ticks():
+        tick.label.set_fontsize(14) 
+    for tick in ax2.yaxis.get_major_ticks():
+        tick.label.set_fontsize(14) 
 
     plt.show()
-
     plt.savefig('results/features_removal.png')
 
 
-    # PRICE OVER TIME
-    fig3 = plt.figure(figsize=(12,4))
-    fig3, ax3 = plt.subplots()
-
+    # Creates Plot showing mean price over time
+    fig3, ax3 = plt.subplots(figsize=(12,4))
     ax3 = df_org.groupby('launch_announced').mean()['misc_price'].plot(
         xlim=[pd.Timestamp('2006-01-01'), pd.Timestamp('2019-04-01')])
 
     ax3.set_ylabel('Average Price (USD)')
     ax3.set_xlabel('Month Announced')
+    ax3.set_title('Average Phone Price per Month')
 
     plt.show()
-
     plt.savefig('results/price_over_time.png')
 
 
-    # Average Screen Size Over Time
-    fig4 = plt.figure(figsize=(12,4))
-    fig4, ax4 = plt.subplots()
-
+    # Creates Plot showing mean display size over time
+    fig4, ax4 = plt.subplots(figsize=(12,4))
     ax4 = df_org.groupby('launch_announced').mean()['display_size'].plot(
         xlim=[pd.Timestamp('2006-01-01'), pd.Timestamp('2019-04-01')])
 
-    ax4.set_ylabel('Screen Size (in)')
+    ax4.set_ylabel('Average Screen Size (in)')
     ax4.set_xlabel('Month Announced')
+    ax4.set_title('Average Display Size per Month')
 
     plt.show()
-
     plt.savefig('results/screen_size_over_time.png')
 
 
-    # NUMBER OF PHONES RELEASED EACH Month
-    fig5 = plt.figure(figsize=(12,4))
-    fig5, ax5 = plt.subplots()
-
-    ax5 = df_org.groupby('launch_announced').plot(
+    # Creates Plot showing aggregate number of phones released over time
+    fig5, ax5 = plt.subplots(figsize=(12,4))
+    ax5 = df_org.groupby('launch_announced').agg({'model':'count'}).plot(
         xlim=[pd.Timestamp('2006-01-01'), pd.Timestamp('2019-04-01')])
 
     ax5.set_ylabel('# Phones Announced')
     ax5.set_xlabel('Month Announced')
+    ax5.set_title('Phones Announced per Month')
 
     plt.show()
+    plt.savefig('results/phone_per_month.png')
 
-    plt.savefig('results/screen_size_over_time.png')
 
     '''
-    # NUMBER OF FEATURES OVER TIME
-
-    fig5, ax6 = plt.subplots()
+    # Attempts to create plot showing Apple release behavior versus the competition on two axes
+    fig6, ax6 = plt.subplots()
     ax6.hist(apple_release_array, color='yellow')
+
     ax6.set_ylabel('Apple Counts (Time-Deltas)')
     ax6.set_xlabel('(OEM Feature Release - First Release) per Feature per Company (time-delta months)') 
     ax6.set_title('Months Between First Release & Other Manufacturer Adoption of All Features')
@@ -410,39 +374,41 @@ if __name__=='__main__':
     ax6.legend(loc='upper right')
 
     plt.show()
-
     plt.savefig('results/release_distribuitions.png')
     '''
 
-    '''
-    fig5, ax6 = plt.subplots()
+    
+    # Attempts to create plot showing Apple release behavior versus the competition on two axes
+    fig6, ax6 = plt.subplots(figsize=(12,6))
     ax7 = ax6.twinx()
+    ax6.hist([apple_release_array, other_release_array])
+    # n, bins, patches = ax6.hist(apple_release_array, other_release_array])
 
-    ax6.hist([apple_release_array, other_release_array], color=colors)
-    n, bins, patches = ax6.hist(apple_release_array, other_release_array])
-
-
-    ax6.xlabel('(Apple Feature Release - First Release) per Feature (time-delta months)')
-    ax7.xlabel('(Other Feature Release - First Release) per Feature (time-delta months)')
+    ax6.set_xlabel('(Time between Apple Feature Release - First Release) per Feature (time-delta months)')
+    # ax7.xlabel('(Other Feature Release - First Release) per Feature (time-delta months)')
     ax6.set_ylabel('Apple Counts (Time-Deltas)')
-    ax7.set_ylabel('Other Counts (Time-Deltas)')
-    ax6.title('Months Between First Release & Other Manufacturer Adoption of All Features')
-    ax6.axvline(a_release_mean, color='green', label='apple mean dist.') 
-    ax7.axvline(o_release_mean, color='red', label='other mean dist.') 
+    ax6.set_title('Months Between First Release & Other Manufacturer Adoption of All Features')
+    ax6.axvline(a_release_mean, color='green', label='apple mean')
     ax6.legend(loc='upper right')
+    ax7.set_ylabel('Other Counts (Time-Deltas)')
+    ax7.axvline(o_release_mean, color='red', label='other mean') 
+   
+    plt.show()
+    plt.savefig('results/double_histpng')
+
+
     '''
-
-
-
-
-
-    '''
-    # Average Battery Capacity Over Time
-    ax3 = df_org.groupby('launch_announced').mean()['battery'].plot(
+    # Creates Plot showing average price over time
+    fig8, ax8
+    ax8 = df_org.groupby('launch_announced').mean()['battery'].plot(
         xlim=[pd.Timestamp('2005-08-01'), pd.Timestamp('2017-10-01')])
 
-    ax3.set_ylabel('battery capacity')
-    ax3.set_xlabel('Month Announced')
+    ax8.set_ylabel('battery capacity (mAh)')
+    ax8.set_xlabel('Month Announced')
+    ax8.set_title('Average Display Size per Month')
+
+    plt.show()
+    plt.savefig('results/screen_size_over_time.png')
     '''
 
 

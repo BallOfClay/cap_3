@@ -7,15 +7,15 @@ import csv
 import sys, os
 sys.path.append('~/dsi/capstones/cap_3/')
 
-# from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
-# import pyspark as ps
-
 # import scipy as stats
 import re
 import dateparser
 import datetime
 import math
 # import json
+
+# from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
+# import pyspark as ps
 
 # import researchpy as rp
 # import statsmodels.api as sm
@@ -27,13 +27,15 @@ pd.set_option('display.width', 500)
 
 # CLEANING - Cast NaN/Null
 def cast_nan(step_df):
+    '''
+    Converts no, -, N/A to nan.
+    '''
 
     make_nan = ['No', 'N/A', 'No cellular connectivity', '-']
 
     df_obj = step_df.select_dtypes(['object'])
 
     step_df[df_obj.columns] = df_obj.apply(lambda x: x.str.strip())
-
     step_df.replace(to_replace=make_nan, value=np.nan, inplace=True)
     
     return step_df
@@ -90,9 +92,12 @@ analysis_drop_words = [
 
 # CLEAING - Date Parser
 def parse_date(date_str):
-    
+    '''
+    Cleans 20 varieties of date strings to parsable forms. 
+    '''
+
     # Parsing variables
-    years = range(1994, 2017)
+    years = range(1994, 2019)
 
     months = ['January', 'February', 'March', 'April', 'May', 'June', 
             'July', 'August', 'September', 'October', 'November', 'December']
@@ -175,21 +180,25 @@ def parse_date(date_str):
 
 # CLEANING - Execute Date Parser
 def refactor_time(df, col='launch_announced'):
+    '''
+    Converts parsable date strings to Month denominated Period Datatypes.
+    '''
+
     step_df = df[df['launch_announced'].notna()]
 
     step_df['launch_announced'] = step_df['launch_announced'].apply(parse_date)
     step_df['launch_announced'] = step_df['launch_announced'].dt.to_period('M')
-    # step_df.loc[df['launch_announced'] >= '2006']
     
     return step_df
 
 
 # CLEANING - Parse Price
 def clean_price(price_value): 
-
-#     price_words = ['About']
-#     currencies = ['USD', 'EUR', 'INR']
-
+    '''
+    Converts the following currency types to USD:
+        currencies = ['USD', 'EUR', 'INR']
+    '''
+    
     if type(price_value)!=str:
         if math.isnan(price_value):
             return np.nan
@@ -213,7 +222,10 @@ def clean_price(price_value):
 
 # CLEANING - Parse Video 
 def clean_video(video_camera_value):
-    
+    '''
+    Parses main_camera_video strings to numerical video resolution (MP), or boolean yes/no.
+    '''
+
     if type(video_camera_value)!=str:
         if math.isnan(video_camera_value):
             return np.nan
@@ -239,7 +251,11 @@ def clean_video(video_camera_value):
 # Cleaning - Screen Size
 
 def screen_refactor(screen_val, split_char=' '):
-    
+    '''
+    Cleans display_size string to numerical value (inches). 
+    Currently removes body screen-to-body ratio.
+    '''
+
     if type(screen_val)!=str:
         if math.isnan(screen_val):
             return np.nan
@@ -257,7 +273,10 @@ tablet_words = ['tab', 'tablet', 'pad', 'book']
 watch_words = ['watch', 'gear', 'fit', 'band']
 
 def parse_type(model_string, words_list):
-    
+    '''
+    Encodes likely tablets watches based off of lists above.
+    '''
+
     if model_string.startswith(','):
         model_string = np.nan
 
@@ -271,7 +290,26 @@ def parse_type(model_string, words_list):
 # EXTRACTION - Features General Function
 def extract_features(org_col, data_frame, new_cols, category, 
                      regex_1 = None, regex_2 = None):
-    
+    '''
+    Generalized feature extraction function. 
+
+    Parameters
+    ----------
+    org_col : string
+        Name of column to be encoded
+    data_frame : DataFrame
+        Dataframe to parsed and where values are returned
+    new_cols : list of strings
+        Names of new columns after one hot encoding
+    category : string
+        Prefix for new_cols
+
+    Returns
+    -------
+        newly encoded feature columns
+
+    '''
+
     for n in new_cols:
         col_str = str(category) + '_' + n.replace(' ', '_')
         data_frame[col_str] = False
@@ -290,9 +328,9 @@ def extract_features(org_col, data_frame, new_cols, category,
         idx += 1
 
 '''
-# EXTRACTING - FINDING UNIQUE PHONE MODELS (NOT COMPLETE)
+# EXTRACTING - Finding Unique Device Families (NOT COMPLETE)
 
-def unique_models(_list, split_1 = None, split_2 = None):
+def unique_family(_list, split_1 = None, split_2 = None):
 #     _list = model_list
     unique_list = []
     
@@ -314,28 +352,38 @@ def unique_models(_list, split_1 = None, split_2 = None):
 '''
 
 # EXTRACTING - Sensors
-relevant_sensors = ['accelerometer', 'gyro', 'heart rate', 'fingerprint', 'compass',
+relevant_sensors = [
+                    'accelerometer', 'gyro', 'heart rate', 'fingerprint', 'compass',
                     'proximity', 'barometer', 'spo2', 'iris scanner', 'gesture', 
                     'tempurature', 'altimeter', 'infrared face recognition'
-                   ]
+                    ]
 
-relevant_body = ['water resistant', 'waterproof', 'water proof', 'splash', 'pay', 'stylus', 
-                 'kickstand', 'flashlight']
+relevant_body = [
+                    'water resistant', 'waterproof', 'water proof', 'splash', 'pay', 'stylus', 
+                    'kickstand', 'flashlight'
+                    ]
 
-relevant_display_type = ['LCD', 'OLED', 'AMOLED', 'TFT', 'STN', 'CSTN', 'ASV', 'IPS',
-                        'resistive', 'capacitive', 'touchscreen']
+relevant_display_type = [
+                    'LCD', 'OLED', 'AMOLED', 'TFT', 'STN', 'CSTN', 'ASV', 'IPS',
+                    'resistive', 'capacitive', 'touchscreen'
+                    ]
 
 relevant_platform_cpu = ['octa-core', 'hexa-core', 'quad-core', 'dual-core']
 
 relevant_sound_loudspeaker = ['stereo']
 
-relevant_comms_wlan = ['a/', 'b/', '/g', '/i', '/n', '/ac', '/ax', 
-                       'dual-band', 'hotspot', 'DLNA', 'Wi-Fi Direct']
+relevant_comms_wlan = [
+                    'a/', 'b/', '/g', '/i', '/n', '/ac', '/ax', 
+                    'dual-band', 'hotspot', 'DLNA', 'Wi-Fi Direct'
+                    ]
 
-relevant_comms_bluetooth = ['1.1', '1.2', '1.5', '2.0', '2.1', '2.2', '3.0', '3.1', 
-                      '4.0', '4.1', '4.2', '5.0', '5.1', 'A2DP', 'EDR', 'LE', 'aptX']
+relevant_comms_bluetooth = [
+                    '1.1', '1.2', '1.5', '2.0', '2.1', '2.2', '3.0', '3.1', 
+                    '4.0', '4.1', '4.2', '5.0', '5.1', 'A2DP', 'EDR', 'LE', 'aptX'
+                    ]
 
 relevant_comms_gps = ['GLONASS', 'A-GPS', 'GALILEO', 'BDS', 'QZSS']
+
 
 relevant_battery = ['removable', 'non-removable', 'li-ion', 'li-po']
 
@@ -351,8 +399,10 @@ relevant_display = ['home button', '3D']
 
 relevant_body_build = ['plastic back', 'glass back', 'back glass', 'ceramic back']
 
-relevant_main_camera = ['wide', 'ultrawide', 'telephoto', 'zoom', 
-                        'depth', 'laser', 'ois', 'pdaf']
+relevant_main_camera = [
+                    'wide', 'ultrawide', 'telephoto', 'zoom', 
+                    'depth', 'laser', 'ois', 'pdaf'
+                    ]
 
 relevant_network_technology = ['GSM', 'CDMA', 'HSPA', 'EDVO', 'LTE', 'UMTS']
 
@@ -361,15 +411,18 @@ relevant_network = ['TD-SCDMA', 'HSDPA']
 
 if __name__=='__main__':
 
+    # Read in original webscrapped Data
     df_org = pd.read_csv('data/gsm.csv')
     df = df_org.copy()
 
+    # Cast Nan's, Drop unneeded columns
     df = cast_nan(df)
 
     df.drop(columns=useless_drop_words, inplace=True)
     df.drop(columns=apple_drop_words, inplace=True)
     df.drop(columns=analysis_drop_words, inplace=True)
 
+    # Cleaing Functions
     df = refactor_time(df)
 
     df['misc_price'].apply(lambda x: clean_price(x))
@@ -378,6 +431,7 @@ if __name__=='__main__':
 
     df['display_size'] = df['display_size'].apply(screen_refactor)
 
+    # Encoded Tablet and Watch
     df['is_tablet'] = df['model'].apply(lambda x: parse_type(x, tablet_words))
     df['is_watch'] = df['model'].apply(lambda x: parse_type(x, watch_words))
 
@@ -385,6 +439,7 @@ if __name__=='__main__':
     df.loc[(df['launch_announced'].dt.year >= 2011) & (df['display_size'] < 1.7), 'is_watch'] = True
     df.loc[df['network_technology'].isnull(), 'is_tablet'] = True
 
+    # One-hot Encode features
     extract_features(org_col = 'features_sensors', 
                  data_frame = df, 
                  new_cols = relevant_sensors, 
