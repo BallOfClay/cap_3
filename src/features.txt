@@ -67,6 +67,10 @@
         octa-core
         "other single-core"
 
+    sound_loudspeaker:
+        yes/no
+        stereo
+
     comms_wlan:
         a
         b
@@ -133,17 +137,38 @@
         wireless
         reverse
 
+    display:
+        home button
+        3D
+
     body_build:
         plastic back
         glass back 
         back glass
         ceramic back
 
-    main_camera_single/dual/triple/quad/five
+    main_camera_single/dual/triple/quad/five:
         wide
         ultrawide
         telephoto
         zoom
+        depth
+        laser
+        ois
+        pdaf
+        
+
+    network_technology:
+        GSM
+        CDMA 
+        HSPA 
+        EVDO
+        LTE
+        UMTS
+
+    network:
+        TD-SCDMA
+        HSDPA
 
 
 
@@ -186,10 +211,6 @@
         storage:
 
         memory/RAM:
-
-    sound_loudspeaker:
-        yes/no
-        stereo
 
     platform_gpu:
         adreno

@@ -62,6 +62,8 @@ if __name__=='__main__':
         'selfie_camera_video',
         'sound_3_5mm_jack',
         'comms_radio',
+        'network_3g_bands',
+        'network_4g_bands',
         'sensor_accelerometer',
         'sensor_gyro',
         'sensor_heart_rate',
