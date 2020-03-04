@@ -13,24 +13,13 @@ import datetime
 import math
 import json
 
-# from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
-# import pyspark as ps
-
-# import researchpy as rp
-# import statsmodels.api as sm
-# from statsmodels.formula.api import ols
-
 from common import is_bool_dtype
 from clean import parse_date
 from clean import refactor_time
 
-# from operator import attrgetter
-# df['duration_dataset'] = (
-#     df['date_1'].dt.to_period('M') -
-#     df['date_2'].dt.to_period('M')).apply(attrgetter('n'))
-
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 500)
+
 
 class FEATURE(object):
     '''

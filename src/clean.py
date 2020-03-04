@@ -14,13 +14,6 @@ import datetime
 import math
 # import json
 
-# from pyspark.sql.types import StructType, StructField, IntegerType, StringType, FloatType, DateType
-# import pyspark as ps
-
-# import researchpy as rp
-# import statsmodels.api as sm
-# from statsmodels.formula.api import ols
-
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 500)
 
